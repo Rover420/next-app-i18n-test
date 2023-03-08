@@ -11,26 +11,22 @@ function getLocale(request: NextRequest): string | undefined {
   const negotiatorHeaders: Record<string, string> = {}
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value))
 
+  const cookie: any = request.cookies.get('lang');
+
   // Use negotiator and intl-localematcher to get best locale
   let languages = new Negotiator({ headers: negotiatorHeaders }).languages()
   // @ts-ignore locales are readonly
   const locales: string[] = i18n.locales
+
+  if(matchLocale(cookie?.value, locales, i18n.defaultLocale) === cookie?.value) {
+    return cookie?.value
+  }
+  
   return matchLocale(languages, locales, i18n.defaultLocale)
 }
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-
-  // // `/_next/` and `/api/` are ignored by the watcher, but we need to ignore files in `public` manually.
-  // // If you have one
-  // if (
-  //   [
-  //     '/manifest.json',
-  //     '/favicon.ico',
-  //     // Your other files in `public`
-  //   ].includes(pathname)
-  // )
-  //   return
 
   // Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = i18n.locales.every(

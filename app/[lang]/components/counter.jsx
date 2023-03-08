@@ -2,15 +2,9 @@
 
 import { useState } from 'react'
 
-export default function Counter({
-  dictionary,
-}: {
-  dictionary: {
-    increment: string
-    decrement: string
-  }
-}) {
+export default function Counter({ dictionary }) {
   const [count, setCount] = useState(0)
+
   return (
     <p>
       This compoment is rendered on client:{' '}
