@@ -28,6 +28,26 @@ function getLocale(request: NextRequest): string | undefined {
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  const pattern = [
+    '/manifest.json',
+    '/favicon.ico',
+    '/logo/',
+    '/site.webmanifest',
+    '/favicon',
+    '/apple',
+    '/android',
+    '/workbox',
+    '/sw.js'
+  ]
+
+  // // `/_next/` and `/api/` are ignored by the watcher, but we need to ignore files in `public` manually.
+  // // If you have one
+  if (
+    pattern.some(pattern => pathname.startsWith(pattern) || pathname.includes(pattern))
+  ) {
+    return
+  }
+
   // Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
